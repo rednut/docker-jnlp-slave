@@ -42,12 +42,23 @@ else
 	fi
 
 	if [[ ! -z "$JENKINS_URL" ]]; then
-		URL="-url $JENKINS_URL"
+		URL="-jnlpUrl $JENKINS_URL"
 	fi
 
-        if [[ "$@" == *"-noCertificateCheck"* ]]; then
-          NO_CERT_CHECK=-noCertificateCheck
+        if [[ ! -z "$SLAVE_SECRET" ]]; then
+            SECRET="-secret $SLAVE_SECRET"
         fi
-        echo "java $JAVA_OPTS -cp /usr/share/jenkins/slave.jar hudson.remoting.jnlp.Main $NO_CERT_CHECK -headless $TUNNEL $URL \"$@\""
-	exec java $JAVA_OPTS -cp /usr/share/jenkins/slave.jar hudson.remoting.jnlp.Main $NO_CERT_CHECK -headless $TUNNEL $URL "$@"
+
+        if [[ ! -z "$NO_CERT_CHECK" ]]; then
+          NCC="-noCertificateCheck"
+        fi
+
+
+        echo java $JAVA_OPTS -jar /usr/share/jenkins/slave.jar $NCC $URL $SECRET
+        java $JAVA_OPTS -jar /usr/share/jenkins/slave.jar $NCC $URL $SECRET
+  #-noCertificateCheck -jnlpUrl "$JENKINS_URL" -secret "$@"
+
+        #echo "java $JAVA_OPTS -cp /usr/share/jenkins/slave.jar hudson.remoting.jnlp.Main $NO_CERT_CHECK -headless $TUNNEL $URL \"$@\""
+  	#exec java $JAVA_OPTS -jar /usr/share/jenkins/slave.jar  $NO_CERT_CHECK -headless $TUNNEL $URL "$@"
+        #fi
 fi	
