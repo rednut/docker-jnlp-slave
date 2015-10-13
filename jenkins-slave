@@ -45,5 +45,9 @@ else
 		URL="-url $JENKINS_URL"
 	fi
 
-	exec java $JAVA_OPTS -cp /usr/share/jenkins/slave.jar hudson.remoting.jnlp.Main -headless $TUNNEL $URL "$@"
+        if [[ "$@" == *"-noCertificateCheck"* ]]; then
+          NO_CERT_CHECK=-noCertificateCheck
+        fi
+        echo "java $JAVA_OPTS -cp /usr/share/jenkins/slave.jar hudson.remoting.jnlp.Main $NO_CERT_CHECK -headless $TUNNEL $URL \"$@\""
+	exec java $JAVA_OPTS -cp /usr/share/jenkins/slave.jar hudson.remoting.jnlp.Main $NO_CERT_CHECK -headless $TUNNEL $URL "$@"
 fi	
